@@ -19,3 +19,247 @@ model Sample {
 
   @@map("samples") // if you want to use snake_case format
 }
+
+model User {
+  id Int @id @default(autoincrement())
+  username String @unique
+  email String @unique
+  password String
+  verified Boolean
+  referralCode String
+  profilePicture String
+  
+  address Address[]
+  referral Referral[] @relation("referral")
+  referrer Referral[] @relation("referrer")
+  voucher Voucher[]
+  cart Cart[]
+  order Order[]
+}
+
+model Address {
+  id Int @id @default(autoincrement())
+
+  user_id Int
+  user User @relation(fields: [user_id], references: [id] )
+  
+  address String
+  city String
+  state String
+  postalCode Int
+  country String
+  latitude String
+  longitude String
+  isPrimary Boolean
+
+  order Order[]
+}
+
+model Referral {
+  id Int @id @default(autoincrement())
+
+  referral_id Int
+  referrer_id Int
+  referral User @relation("referral",fields: [referral_id], references: [id])
+  referrer User @relation("referrer",fields: [referrer_id], references: [id])
+
+  voucher_id Int
+  voucher Voucher @relation(fields: [voucher_id], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Voucher{
+  id Int @id @default(autoincrement())
+  code String
+  type String
+  value String
+  maxDiscount String
+  expiryDate DateTime
+
+  user_id Int
+  user User @relation(fields: [user_id], references: [id])
+
+  referral Referral[]
+  order Order[]
+}
+
+model Cart{
+  id Int @id @default(autoincrement())
+  
+  user_id Int
+  user User @relation(fields: [user_id], references: [id])
+
+  item Item[]
+}
+
+model Admin{
+  id Int @id @default(autoincrement())
+  username String @unique
+  email String @unique
+  password String
+
+  role_id Int
+  role Role @relation(fields: [role_id], references: [id])
+
+  store Store[]
+  product Product[]
+  order Order[]
+
+}
+
+model Role{
+  id Int @id @default(autoincrement())
+  role String
+  admin Admin[]
+}
+
+model Store{
+  id Int @id @default(autoincrement())
+  
+  admin_id Int
+  admin Admin @relation(fields: [admin_id], references: [id])
+
+  name String @unique
+  location String
+  latitude String
+  longitude String
+
+  order Order[]
+  inventory Inventory[]
+  discount Discount[]
+}
+
+model Product{
+  id Int @id @default(autoincrement())
+
+  admin_id Int
+  admin Admin @relation(fields: [admin_id], references: [id])
+
+  name String
+  description String
+  price Int
+  
+  category_id Int
+  category Category @relation(fields: [category_id], references: [id])
+
+  image String
+
+  item Item[] 
+  inventory Inventory[]
+  discount Discount[]
+  orderItem OrderItem[]
+}
+
+model Category{
+  id Int @id @default(autoincrement())
+  category String
+  product Product[]
+}
+
+model Item{
+  id Int @id @default(autoincrement())
+
+  product_id Int
+  product Product @relation(fields: [product_id], references: [id])
+
+  cart_id Int
+  cart Cart @relation(fields: [cart_id], references: [id])
+
+  quantity Int
+}
+
+model Inventory{
+  id Int @id @default(autoincrement())
+  
+  store_id Int
+  store Store @relation(fields: [store_id], references: [id])
+
+  product_id Int
+  product Product @relation(fields: [product_id], references: [id])
+
+  description String
+  quantity Int
+  updateAt DateTime @updatedAt
+}
+
+model Discount{
+  id Int @id @default(autoincrement())
+  
+  store_id Int
+  store Store @relation(fields: [store_id], references: [id])
+
+  product_id Int
+  product Product @relation(fields: [product_id], references: [id])
+
+  type String
+  value String
+  minPurchase Int
+  maxPurchase Int
+  startDate DateTime
+  endDate DateTime
+}
+
+model Order{
+  id Int @id @default(autoincrement())
+  
+  user_id Int
+  user User @relation(fields: [user_id], references: [id])
+
+  store_id Int
+  store Store @relation(fields: [store_id], references: [id])
+
+  address_id Int
+  address Address @relation(fields: [address_id], references: [id])
+
+  voucher_id Int
+  voucher Voucher @relation(fields: [voucher_id], references: [id])
+
+  status String
+  totalAmount String
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  admin_id Int
+  admin Admin @relation(fields: [admin_id], references: [id])
+
+  payment Payment[]
+  shipment Shipment[]
+  orderItem OrderItem[]
+}
+
+model Payment{
+  id Int @id @default(autoincrement())
+
+  order_id Int
+  order Order @relation(fields: [order_id], references: [id])
+
+  method String
+  status String
+  proof String
+  createdAt DateTime @default(now())
+}
+
+model Shipment{
+  id Int @id @default(autoincrement())
+
+  order_id Int
+  order Order @relation(fields: [order_id], references: [id])
+
+  tracking_number String
+  status String
+  createdAt DateTime @default(now())
+}
+
+model OrderItem{
+  id Int @id @default(autoincrement())
+
+  order_id Int
+  order Order @relation(fields: [order_id], references: [id])
+
+  product_id Int
+  product Product @relation(fields: [product_id], references: [id])
+  
+  quantity Int
+  price Int
+}
