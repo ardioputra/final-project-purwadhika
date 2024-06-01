@@ -10,6 +10,7 @@ import express, {
 import cors from 'cors';
 import { PORT } from './config';
 import { SampleRouter } from './routers/sample.router';
+import { ErrorMiddleware } from './middlewares/error.middleware';
 
 export default class App {
   private app: Express;
@@ -48,6 +49,8 @@ export default class App {
         }
       },
     );
+
+    this.app.use(ErrorMiddleware)
   }
 
   private routes(): void {
