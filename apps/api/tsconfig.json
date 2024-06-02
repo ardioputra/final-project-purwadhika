@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "experimentalDecorators": true,
     "target": "ES2015",
     "module": "commonjs",
     "strict": true,
@@ -10,7 +11,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
   },
   // "include": ["src/**/*"],
   "include": ["**/*.ts"],

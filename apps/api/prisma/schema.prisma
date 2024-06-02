@@ -27,6 +27,10 @@ model User {
   password String
   verified Boolean
   referralCode String
+  name String
+  gender String
+  birthDate DateTime
+  role String
   profilePicture String
   
   address Address[]
