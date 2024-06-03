@@ -5,5 +5,9 @@ export interface User {
   password: string;
   verified: Boolean;
   referralCode: string;
+  name: string;
+  gender: string;
+  birthDate: Date;
+  role: string;
   profilePicture: string;
 }
