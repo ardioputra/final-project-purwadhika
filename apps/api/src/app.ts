@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import express, {
   json,
   urlencoded,
@@ -10,6 +11,7 @@ import express, {
 import cors from 'cors';
 import { PORT } from './config';
 import { SampleRouter } from './routers/sample.router';
+import { AuthRouter } from './routers/auth.router';
 import { ErrorMiddleware } from './middlewares/error.middleware';
 
 export default class App {
@@ -50,17 +52,19 @@ export default class App {
       },
     );
 
-    this.app.use(ErrorMiddleware)
+    this.app.use(ErrorMiddleware);
   }
 
   private routes(): void {
     const sampleRouter = new SampleRouter();
+    const authRouter = new AuthRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 
-    this.app.use('/samples', sampleRouter.getRouter());
+    this.app.use('/api/samples', sampleRouter.getRouter());
+    this.app.use('/api/auth', authRouter.getRouter());
   }
 
   public start(): void {
