@@ -9,7 +9,7 @@ export class AuthQueries {
           id: true,
           username: true,
           email: true,
-          role: true,
+          role_id: true,
         },
         where: {
           email: data.email,
@@ -23,7 +23,7 @@ export class AuthQueries {
             id: true,
             username: true,
             email: true,
-            role: true,
+            role_id: true,
           },
           where: {
             username: data.username,

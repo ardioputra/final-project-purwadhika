@@ -34,7 +34,7 @@ export class AuthActions {
         id: user.id,
         username: user.username,
         email: user.email,
-        role: user.role,
+        role_id: user.role_id,
       };
 
       const token = sign(payload, String(API_KEY), { expiresIn: '1h' });

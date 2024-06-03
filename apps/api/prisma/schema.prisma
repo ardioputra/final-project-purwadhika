@@ -30,8 +30,12 @@ model User {
   name String
   gender String
   birthDate DateTime
-  role String
+  
+  role_id Int
+  role Role @relation(fields: [role_id], references: [id])
+  
   profilePicture String
+  claimedCode String
   
   address Address[]
   referral Referral[] @relation("referral")
@@ -115,6 +119,8 @@ model Admin{
 model Role{
   id Int @id @default(autoincrement())
   role String
+
+  user User[]
   admin Admin[]
 }
 

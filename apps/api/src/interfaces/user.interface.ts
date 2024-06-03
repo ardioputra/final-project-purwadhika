@@ -8,6 +8,6 @@ export interface User {
   name: string;
   gender: string;
   birthDate: Date;
-  role: string;
+  role_id: number;
   profilePicture: string;
 }
