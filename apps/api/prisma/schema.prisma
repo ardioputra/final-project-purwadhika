@@ -30,19 +30,15 @@ model User {
   name String
   gender String
   birthDate DateTime
-  
-  role_id Int
-  role Role @relation(fields: [role_id], references: [id])
-  
+  role String
   profilePicture String
   claimedCode String
   
   address Address[]
-  referral Referral[] @relation("referral")
-  referrer Referral[] @relation("referrer")
-  voucher Voucher[]
   cart Cart[]
   order Order[]
+
+  @@map("users")
 }
 
 model Address {
@@ -59,23 +55,10 @@ model Address {
   latitude String
   longitude String
   isPrimary Boolean
-
-  order Order[]
+  
+  @@map("addresses")
 }
 
-model Referral {
-  id Int @id @default(autoincrement())
-
-  referral_id Int
-  referrer_id Int
-  referral User @relation("referral",fields: [referral_id], references: [id])
-  referrer User @relation("referrer",fields: [referrer_id], references: [id])
-
-  voucher_id Int
-  voucher Voucher @relation(fields: [voucher_id], references: [id])
-
-  createdAt DateTime @default(now())
-}
 
 model Voucher{
   id Int @id @default(autoincrement())
@@ -85,11 +68,9 @@ model Voucher{
   maxDiscount String
   expiryDate DateTime
 
-  user_id Int
-  user User @relation(fields: [user_id], references: [id])
-
-  referral Referral[]
   order Order[]
+
+  @@map("vouchers")
 }
 
 model Cart{
@@ -98,7 +79,9 @@ model Cart{
   user_id Int
   user User @relation(fields: [user_id], references: [id])
 
-  item Item[]
+  cartItem CartItem[]
+
+  @@map("carts")
 }
 
 model Admin{
@@ -112,16 +95,17 @@ model Admin{
 
   store Store[]
   product Product[]
-  order Order[]
 
+  @@map("admins")
 }
 
 model Role{
   id Int @id @default(autoincrement())
   role String
 
-  user User[]
   admin Admin[]
+
+  @@map("roles")
 }
 
 model Store{
@@ -138,6 +122,8 @@ model Store{
   order Order[]
   inventory Inventory[]
   discount Discount[]
+
+  @@map("stores")
 }
 
 model Product{
@@ -155,28 +141,27 @@ model Product{
 
   image String
 
-  item Item[] 
-  inventory Inventory[]
-  discount Discount[]
-  orderItem OrderItem[]
+  @@map("products")
 }
 
 model Category{
   id Int @id @default(autoincrement())
   category String
+  
   product Product[]
+
+  @@map("categories")
 }
 
-model Item{
+model CartItem{
   id Int @id @default(autoincrement())
-
-  product_id Int
-  product Product @relation(fields: [product_id], references: [id])
 
   cart_id Int
   cart Cart @relation(fields: [cart_id], references: [id])
 
   quantity Int
+
+  @@map("cart_items")
 }
 
 model Inventory{
@@ -185,12 +170,11 @@ model Inventory{
   store_id Int
   store Store @relation(fields: [store_id], references: [id])
 
-  product_id Int
-  product Product @relation(fields: [product_id], references: [id])
-
   description String
   quantity Int
   updateAt DateTime @updatedAt
+
+  @@map("inventories")
 }
 
 model Discount{
@@ -199,15 +183,14 @@ model Discount{
   store_id Int
   store Store @relation(fields: [store_id], references: [id])
 
-  product_id Int
-  product Product @relation(fields: [product_id], references: [id])
-
   type String
   value String
   minPurchase Int
   maxPurchase Int
   startDate DateTime
   endDate DateTime
+
+  @@map("discounts")
 }
 
 model Order{
@@ -219,9 +202,6 @@ model Order{
   store_id Int
   store Store @relation(fields: [store_id], references: [id])
 
-  address_id Int
-  address Address @relation(fields: [address_id], references: [id])
-
   voucher_id Int
   voucher Voucher @relation(fields: [voucher_id], references: [id])
 
@@ -230,12 +210,11 @@ model Order{
   createdAt DateTime @default(now())
   updateAt DateTime @updatedAt
 
-  admin_id Int
-  admin Admin @relation(fields: [admin_id], references: [id])
-
   payment Payment[]
   shipment Shipment[]
   orderItem OrderItem[]
+
+  @@map("orders")
 }
 
 model Payment{
@@ -248,6 +227,8 @@ model Payment{
   status String
   proof String
   createdAt DateTime @default(now())
+
+  @@map("payments")
 }
 
 model Shipment{
@@ -259,6 +240,8 @@ model Shipment{
   tracking_number String
   status String
   createdAt DateTime @default(now())
+
+  @@map("shipments")
 }
 
 model OrderItem{
@@ -267,9 +250,8 @@ model OrderItem{
   order_id Int
   order Order @relation(fields: [order_id], references: [id])
 
-  product_id Int
-  product Product @relation(fields: [product_id], references: [id])
-  
   quantity Int
   price Int
+
+  @@map("order_items")
 }
