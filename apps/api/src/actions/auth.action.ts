@@ -6,11 +6,27 @@ import { httpException } from '@/exceptions/http.exception';
 import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { API_KEY } from '@/config';
+import { User } from '@prisma/client';
 
 @Service()
 export class AuthActions {
   authQuery = Container.get(AuthQueries);
   userQuery = Container.get(UserQueries);
+
+  public registerAction = async (data: User) => {
+    try {
+      const existingUser = await this.userQuery.getUserByEmail(data.email);
+
+      if (existingUser)
+        throw new httpException(500, 'Email already registered!');
+
+      const newUser = await this.authQuery.registerQuery(data.email);
+
+      return newUser;
+    } catch (e) {
+      throw e;
+    }
+  };
 
   public loginAction = async (data: Auth) => {
     try {
